@@ -51,12 +51,11 @@ hs = -1/params(2);
 rho0 = exp(params(1));
 
 P_obt = 0.5*(rho0*exp(-h_mes./hs)).*v_mes(1:2:end).^2;
-%bug les données ne matchent pas celles plus haut??
 
 % code pour calcul de l'erreur copié du laboratoire
 E = sum((P_obt - Pdyn).^2);
 N2 = length(h_mes);
-RMS = sqrt(1/N2 *E);
+RMS = sqrt(E/N2);
 moy = sum(Pdyn)/N2;
 R_2 = sum((P_obt - moy).^2)/sum((Pdyn - moy).^2);
 
