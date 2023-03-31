@@ -11,9 +11,9 @@ acc_mes = -acc_mes;
 % Méthode des trapèzes pour faire l'intégrale de l'accélération
 N = length(t);
 h = t(2) - t(1);
-v_mes(1,1) = 0 + v_ini;
+v_mes(1,1) = v_ini;
 for i = 2:N
-    v_mes(i,1) = v_ini + (acc_mes(1) + acc_mes(i) + 2*sum(acc_mes(2:i-1))) * h/2;
+    v_mes(i,1) = v_ini + ((acc_mes(1) + acc_mes(i) + 2*sum(acc_mes(2:i-1))) * h/2);
 end
 % Erreur de la méthode des trapèzes
 df_a = (acc_mes(2) - acc_mes(1))/h;
@@ -24,7 +24,7 @@ Err_vit = h^2/12*(df_b - df_a);
 h_mes(1,1) = h_ini;
 xs(1) = t(1);
 for i = 3:2:N
-    h_mes((i-1)/2 + 1,1) = h_ini - (v_mes(1) + v_mes(i) + 4*sum(v_mes((2:2:i-1))) + 2*sum(v_mes(3:2:i-1))) * h/3;
+    h_mes((i-1)/2 + 1,1) = h_ini + ((v_mes(1) + v_mes(i) + 4*sum(v_mes((2:2:i-1))) + 2*sum(v_mes(3:2:i-1))) * h/3);
     xs((i-1)/2 + 1) = t(i);
 end
 % Erreur de la méthode des trapèzes
@@ -40,7 +40,7 @@ Pdyn = Daero/(S * CD0);
 X = h_mes;
 Y = log((2.*Pdyn)./(v_mes(1:2:end).^2));
 
-mat1 = [N       sum(X);
+mat1 = [length(h_mes)       sum(X);
         sum(X)  sum(X.^2)];
 
 mat2 = [sum(Y);
@@ -51,11 +51,14 @@ hs = -1/params(2);
 rho0 = exp(params(1));
 
 P_obt = 0.5*(rho0*exp(-h_mes./hs)).*v_mes(1:2:end).^2;
+%bug les données ne matchent pas celles plus haut??
+
 % code pour calcul de l'erreur copié du laboratoire
-% E = sum((P_obt - P).^2);
-% RMS = sqrt(1/N *E);
-% moy = sum(P)/N;
-% R_2 = sum((P_obt - moy).^2)/sum((P - moy).^2);
+E = sum((P_obt - Pdyn).^2);
+N2 = length(h_mes);
+RMS = sqrt(1/N2 *E);
+moy = sum(Pdyn)/N2;
+R_2 = sum((P_obt - moy).^2)/sum((Pdyn - moy).^2);
 
 
 
@@ -86,7 +89,7 @@ ylabel('altitude (m)')
 legend('altitude mesuré')
 
 figure()
-plot(t(1:2:end), Pdyn)
+plot(t(1:2:end), Pdyn, 'o')
 hold on
 plot(t(1:2:end), P_obt)
 grid minor
