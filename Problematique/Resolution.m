@@ -3,7 +3,7 @@ clear all
 close all
 
 format short G
-load('accelero_Data_from_NASA')
+load('Accelero_Data_from_NASA\Accelero_Data_from_NASA.mat')
 constantes
 
 acc_mes = -acc_mes;
@@ -23,9 +23,8 @@ Err_vit = (h^2/12)*(df_b - df_a);
 %méthode de simpson pour faire l'intégrale de la vitesse
 h_mes(1,1) = h_ini;
 ts(1) = t(1);
-Nm = N + 1;
-for i = 3:2:Nm
-    h_mes((i-1)/2 + 1,1) = h_ini - ((v_mes(1) + v_mes(i) + 4*sum(v_mes((2:2:i-1))) + 2*sum(v_mes(3:2:i-1))) * h/3);
+for i = 3:2:N
+    h_mes((i-1)/2 + 1,1) = h_ini - ((v_mes(1) + v_mes(i) + 4*sum(v_mes((2:2:i-1))) + 2*sum(v_mes(3:2:i-1))) * (h/3));
     ts((i-1)/2 + 1) = t(i);
 end
 ts = ts';
