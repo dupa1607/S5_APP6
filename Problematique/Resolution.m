@@ -55,7 +55,7 @@ P_obt = 0.5*(rho0*exp(-h_mes./hs)).*(v_mes(1:2:end).^2);
 Daero_obt = P_obt * S *CD0;
 acc_approx = -Daero_obt/m - gr_sin_gamma;
 %Les données semblent être shiftés d'une case ???
-% acc_approx = circshift(acc_approx,1)
+
 
 % code pour calcul de l'erreur copié du laboratoire
 E = sum((P_obt - Pdyn).^2);
@@ -68,7 +68,7 @@ R_2 = sum((P_obt - moy).^2)/sum((Pdyn - moy).^2);
 
 
 %% figures
-% ts = ts + 1 % Il semble y avoir une erreur de shift de 1 dans les données
+% ts = ts + 1; % Il semble y avoir une erreur de shift de 1 dans les données
 figure()
 plot(t, acc_mes, 'o')
 hold on
@@ -81,28 +81,28 @@ legend('acc mesuré', 'acc obtenu')
 title('Accélératione du test NASA en fonction du temps')
 
 
-% figure()
-% plot(t, v_mes, 'o')
-% 
-% grid minor
-% xlabel('temps (s)')
-% ylabel('Vitesse (m/s)')
-% legend('vit mesuré')
-% 
-% figure()
-% plot(ts, h_mes, 'o')
-% 
-% grid minor
-% xlabel('temps (s)')
-% ylabel('altitude (m)')
-% legend('altitude mesuré')
-% 
-% %Les données semblent être shiftés d'une case ???
-% % P_obt = circshift( P_obt , 1 )
-% figure()
-% plot(ts, Pdyn, 'o')
-% hold on
-% plot(ts, P_obt)
-% grid minor
-% legend('Pdyn calc. avec Daero', 'Pdyn calc avec hs et rho0')
-% title('Pression dynamique comparaison')
+figure()
+plot(t, v_mes, 'o')
+
+grid minor
+xlabel('temps (s)')
+ylabel('Vitesse (m/s)')
+legend('vit mesuré')
+
+figure()
+plot(ts, h_mes, 'o')
+
+grid minor
+xlabel('temps (s)')
+ylabel('altitude (m)')
+legend('altitude mesuré')
+
+%Les données semblent être shiftés d'une case ???
+% P_obt = circshift( P_obt , 1 )
+figure()
+plot(ts, Pdyn, 'o')
+hold on
+plot(ts, P_obt)
+grid minor
+legend('Pdyn calc. avec Daero', 'Pdyn calc avec hs et rho0')
+title('Pression dynamique comparaison')
