@@ -24,4 +24,5 @@ hfin = 10000; % m
 %Contraintes
 dt_lim = 40; %s
 Pdyn_max = 9500; %N/m^2
+Pdyn_lim = 2650;
 teta_cmd = 60; %degrés
