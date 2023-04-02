@@ -18,7 +18,7 @@ teta_ini = deg2rad(-80); %rad
 q_ini = deg2rad(0); %rad/s
 
 %conditions finales désirés
-vfin = 250; %ou 300 m/s
+% vfin = 250; %ou 300 m/s
 hfin = 10000; % m
 
 %Contraintes

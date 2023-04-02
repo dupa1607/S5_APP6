@@ -33,7 +33,7 @@ ts = ts';
 % Erreur de la méthode simpson
 d3f_a = (v_mes(4) - 3*v_mes(3) + 3*v_mes(2) - v_mes(1))/h^3;
 d3f_b = (v_mes(N) - 3*v_mes(N-1) + 3*v_mes(N-2) - v_mes(N-3))/h^3;
-Err_pos = h^4/180*(d3f_b - d3f_a);
+Err_alt = h^4/180*(d3f_b - d3f_a);
 
 % Identification des paramètres (boite grise) en trouvant la forme linéaire
 gr_sin_gamma = -MUmars./((Rmars + h_mes).^2);
@@ -60,8 +60,10 @@ mat2 = [sum(Y);
 params = inv(mat1) * mat2;
 hs = -1/params(2);
 rho0 = exp(params(1));
-% hs = 11196
-% rho0 = 0.0207;
+
+P_obt = 0.5*(rho0*exp(-h_mes./hs)).*(v_mes(1:2:end).^2);
+Daero_obt = P_obt * S *CD0;
+acc_approx = -Daero_obt/m;
 
 var = -1/hs;
 b = log(rho0)
@@ -69,17 +71,14 @@ g = var * X + b;
 E = sum((g - Y).^2);
 N2 = length(Y);
 RMS = sqrt(E/N2);
+RMS_abs = sqrt(mean((acc_mes(1:2:end) - acc_approx).^2))
+RMS_rel = sqrt(mean(((acc_mes(1:2:end) - acc_approx)./acc_mes(1:2:end)).^2))
 moy = sum(Y)/N2;
 R_2 = sum((g - moy).^2)/sum((Y - moy).^2);
 
 
 
-% P_obt = 0.5*(rho0*exp(-h_mes./hs)).*(v_mes(1:2:end).^2);
-P_obt = 0.5*(rho0*exp(-h_mes./hs)).*(v_mes(1:2:end).^2);
-Daero_obt = P_obt * S *CD0;
-% acc_approx = -Daero_obt/m - gr_sin_gamma;
-acc_approx = -Daero_obt/m;
-%Les données semblent être shiftés d'une case ???
+
 
 
 % code pour calcul de l'erreur copié du laboratoire
@@ -129,7 +128,7 @@ rho_simul = rho0 .* exp(-h_simul./hs);
 v_simul_300 = v_ini*exp(0.5*B*hs*(rho_simul - rho_ini)/sind(gamma_ref_300));
 Pdyn_simul_300 = 0.5*rho_simul .* v_simul_300.^2;
 
-v_simul_250 = 250./exp(0.5*B*hs*(rho_fin - rho_simul)./(sind(gamma_ref_250)));
+v_simul_250 = v_ini*exp(0.5*B*hs*(rho_simul - rho_ini)/sind(gamma_ref_250));
 Pdyn_simul_250 = 0.5*rho_simul .* v_simul_250.^2;
 
 % ts = ts + 1; % Il semble y avoir une erreur de shift de 1 dans les données
@@ -197,7 +196,7 @@ disp(['Valeur de h (300): ', num2str(h_raph), ' en ', num2str(nb_iter),  ' itér
 rho_2_300 = rho0 .* exp(-h_raph./hs);
 v2_300 = v_ini*exp(0.5*B*hs*(rho_2_300 - rho_ini)/sind(gamma_ref_300));
 h2_300 = h_raph;
-v_moy_300 = (v2_300 - v1_300)/2;
+v_moy_300 = (v2_300 + v1_300)/2;
 dist_300 = (h2_300 - h1_300)/sind(-gamma_ref_300);
 dt_300 = dist_300 / v_moy_300;
 disp(['Valeur de v1 (300): ', num2str(v2_300)])
@@ -260,7 +259,7 @@ rho_2_250 = rho0 .* exp(-h_raph./hs);
 v2_250 = v_ini*exp(0.5*B*hs*(rho_2_250 - rho_ini)/sind(gamma_ref_250));
 h2_250 = h_raph;
 
-v_moy_250 = (v2_250 - v1_250)/2;
+v_moy_250 = (v2_250 + v1_250)/2;
 dist_250 = (h2_250 - h1_250)/sind(-gamma_ref_250);
 dt_250 = dist_250 / v_moy_250;
 disp(['Valeur de v2 (250): ', num2str(v2_250)])
@@ -285,6 +284,71 @@ figure()
 step(ft)
 
 %% Validation
+clc 
+close all
+
+
+  z0 = [v_ini gamma_ini h_ini s_ini teta_ini q_ini 0];
+  tspan = [0, 150];
+
+  abs_tol = 1e-10;
+  options = odeset('abstol' ,abs_tol);
+  [tv, z] = ode45('eqn_dyn', tspan, z0, options);
+
+  figure()
+  plot(tv, z(:,1))
+  grid minor
+  title('vitesse en fonction du temps')
+
+  figure()
+  plot(tv, z(:,2))
+  grid minor
+  title('gamma en fonction du temps')
+
+  figure()
+  plot(tv, z(:,3))
+  grid minor
+  title('hauteur en fonction du temps')
+
+  figure()
+  plot(tv, z(:,4))
+  grid minor
+  title('s en fonction du temps')
+
+  figure()
+  plot(tv, rad2deg(z(:,5)))
+  grid minor
+  title('teta(deg) en fonction du temps')
+
+  figure()
+  plot(tv, z(:,6))
+  grid minor
+  title('q en fonction du temps')
+
+  rho_valid = rho0 * exp(-z(:,3)./hs);
+  Pdyn_valid = 0.5*rho_valid.*z(:,1).^2;
+  figure()
+  plot(tv, Pdyn_valid)
+  grid minor
+  title('Pression dynamqiue en fonction du temps')
+
+  figure()
+  plot(tv, z(:,7))
+  grid minor
+  title('Daero < 2650 en fonction du temps')
+
+  temp = z(:,7) == 0;
+  idx = find(temp, 1, 'last');
+  t1 = tv(idx);
+
+  temp = z(:,7) == z(end,7);
+  idx2 = find(temp, 1, 'first');
+  t2 = tv(idx2);
+
+  disp(['Temps > 2650 = ', num2str(t2-t1), ' s']);
+  
+
+
 
 
 
