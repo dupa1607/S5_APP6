@@ -130,22 +130,23 @@ Pdyn_simul_300 = 0.5*rho_simul .* v_simul_300.^2;
 
 v_simul_250 = v_ini*exp(0.5*B*hs*(rho_simul - rho_ini)/sind(gamma_ref_250));
 Pdyn_simul_250 = 0.5*rho_simul .* v_simul_250.^2;
-
-% ts = ts + 1; % Il semble y avoir une erreur de shift de 1 dans les données
-figure()
-plot(h_simul, Pdyn_simul_300)
-grid minor
-title("pression dynamique")
-
-figure()
-plot(h_simul, Pdyn_simul_300*S*CD0)
-grid minor
-title("Daero")
-
-figure()
-plot(h_simul, v_simul_300)
-grid minor
-title('Vitesse simuler avec RAA et gravité')
+% 
+% figure()
+% plot(h_simul, Pdyn_simul_300)
+% grid minor
+% title("pression dynamique")
+% 
+% figure()
+% plot(h_simul, Pdyn_simul_300*S*CD0)
+% grid minor
+% title("Daero")
+% 
+% figure()
+% plot(h_simul, v_simul_300)
+% grid minor
+% title('Vitesse simuler avec RAA et gravité')
+Pdyn_max_300 = max(Pdyn_simul_300);
+Pdyn_max_250 = max(Pdyn_simul_250);
 
 
 %Newton-Raphson 300m/s
@@ -153,12 +154,9 @@ h_raph = 16000;
 
 rho_raph = rho0 * exp(-h_raph/hs);
 F = 0.5*rho0*exp(-h_raph./hs).*(v_ini*exp(0.5*B*hs*(rho_raph - rho_ini)./sind(gamma_ref_300))).^2*S*CD0 - 2650;
-
 tol = 1e-10;
 a = v_ini^2*S*CD0*0.5*rho0;
-
 D = a*((-B*rho0.*exp(-h_raph./hs))./sind(gamma_ref_300) - 1/hs) .* exp(-h_raph./hs + (B*hs*(rho0.*exp(-h_raph./hs) - rho_ini))./sind(gamma_ref_300));
-
 nb_iter = 0;
 while (abs(F)) > tol & nb_iter < 501
     h_raph = h_raph - F/D;
@@ -175,14 +173,11 @@ disp(['Valeur de v1 (300): ', num2str(v1_300)])
 
 
 h_raph = 51000;
-
 rho_raph = rho0 * exp(-h_raph/hs);
 F = 0.5*rho0*exp(-h_raph./hs).*(v_ini*exp(0.5*B*hs*(rho_raph - rho_ini)./sind(gamma_ref_300))).^2*S*CD0 - 2650;
-
 tol = 1e-10;
 a = v_ini^2*S*CD0*0.5*rho0;
 D = a*((-B*rho0.*exp(-h_raph./hs))./sind(gamma_ref_300) - 1/hs) .* exp(-h_raph./hs + (B*hs*(rho0.*exp(-h_raph./hs) - rho_ini))./sind(gamma_ref_300));
-
 nb_iter = 0;
 while (abs(F)) > tol & nb_iter < 501
     h_raph = h_raph - F/D;
@@ -212,15 +207,11 @@ fprintf('\n')
 
 %Newton-Raphson 250m/s
 h_raph = 16000;
-
 rho_raph = rho0 * exp(-h_raph/hs);
 F = 0.5*rho0*exp(-h_raph./hs).*(v_ini*exp(0.5*B*hs*(rho_raph - rho_ini)./sind(gamma_ref_250))).^2*S*CD0 - 2650;
-
 tol = 1e-10;
 a = v_ini^2*S*CD0*0.5*rho0;
-
 D = a*((-B*rho0.*exp(-h_raph./hs))./sind(gamma_ref_250) - 1/hs) .* exp(-h_raph./hs + (B*hs*(rho0.*exp(-h_raph./hs) - rho_ini))./sind(gamma_ref_250));
-
 nb_iter = 0;
 while (abs(F)) > tol & nb_iter < 501
     h_raph = h_raph - F/D;
@@ -237,15 +228,11 @@ disp(['Valeur de v1 (250): ', num2str(v1_250)])
 
 
 h_raph = 51000;
-
 rho_raph = rho0 * exp(-h_raph/hs);
 F = 0.5*rho0*exp(-h_raph./hs).*(v_ini*exp(0.5*B*hs*(rho_raph - rho_ini)./sind(gamma_ref_250))).^2*S*CD0 - 2650;
-
 tol = 1e-10;
 a = v_ini^2*S*CD0*0.5*rho0;
-
 D = a*((-B*rho0.*exp(-h_raph./hs))./sind(gamma_ref_250) - 1/hs) .* exp(-h_raph./hs + (B*hs*(rho0.*exp(-h_raph./hs) - rho_ini))./sind(gamma_ref_250));
-
 nb_iter = 0;
 while (abs(F)) > tol & nb_iter < 501
     h_raph = h_raph - F/D;
