@@ -269,9 +269,9 @@ fprintf('\n')
 
 %% Actionneur translation
 Kp =4;
-gamma_dot = tf([1], [1/Kp 1])
-figure()
-step(gamma_dot)
+gamma_dot = tf([1], [1/Kp 1]);
+% figure()
+% step(gamma_dot)
 
 
 %% Actionneur rotation
@@ -280,13 +280,15 @@ Kp = 400;
 Kd = 28;
 
 ft = tf([Kp Kd], [1 Kd Kp])
-figure()
-step(ft)
+% figure()
+% step(ft)
 
 %% Validation
 clc 
 close all
 
+myfile = fullfile(tempdir,'g_ref_250_rt.mat');
+matObj = matfile(myfile,'Writable',true);
 
   z0 = [v_ini gamma_ini h_ini s_ini teta_ini q_ini 0];
   tspan = [0, 150];
@@ -295,57 +297,18 @@ close all
   options = odeset('abstol' ,abs_tol);
   [tv, z] = ode45('eqn_dyn', tspan, z0, options);
 
-  figure()
-  plot(tv, z(:,1))
-  grid minor
-  title('vitesse en fonction du temps')
+[~,gamma_ref_250_rt] = cellfun(@(t,x)  eqn_dyn(t,x.'), num2cell(tv), num2cell(z,2),'uni',0);
+gamma_ref_250_rt = rad2deg(cell2mat(gamma_ref_250_rt));
+% [~,gamma_ref_300_rt] = cellfun(@(t,x)  eqn_dyn(t,x.'), num2cell(tv), num2cell(z,2),'uni',0);
+% gamma_ref_300_rt = rad2deg(cell2mat(gamma_ref_300_rt));
+%   graph_sans_asser
+  graph_asser_250
+%   graph_asser_300
 
-  figure()
-  plot(tv, z(:,2))
-  grid minor
-  title('gamma en fonction du temps')
+%   disp(['Temps > 2650 = ', num2str(z(end,7)), ' s']);
 
-  figure()
-  plot(tv, z(:,3))
-  grid minor
-  title('hauteur en fonction du temps')
-
-  figure()
-  plot(tv, z(:,4))
-  grid minor
-  title('s en fonction du temps')
-
-  figure()
-  plot(tv, rad2deg(z(:,5)))
-  grid minor
-  title('teta(deg) en fonction du temps')
-
-  figure()
-  plot(tv, z(:,6))
-  grid minor
-  title('q en fonction du temps')
-
-  rho_valid = rho0 * exp(-z(:,3)./hs);
-  Pdyn_valid = 0.5*rho_valid.*z(:,1).^2;
-  figure()
-  plot(tv, Pdyn_valid)
-  grid minor
-  title('Pression dynamqiue en fonction du temps')
-
-  figure()
-  plot(tv, z(:,7))
-  grid minor
-  title('Daero < 2650 en fonction du temps')
-
-  temp = z(:,7) == 0;
-  idx = find(temp, 1, 'last');
-  t1 = tv(idx);
-
-  temp = z(:,7) == z(end,7);
-  idx2 = find(temp, 1, 'first');
-  t2 = tv(idx2);
-
-  disp(['Temps > 2650 = ', num2str(t2-t1), ' s']);
+% gamma_ref_250_rt = readmatrix('gamma_ref_250_rt.txt');
+% gamma_ref_300_rt = readmatrix('gamma_ref_300_rt.txt');
   
 
 

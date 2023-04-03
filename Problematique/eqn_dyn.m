@@ -1,4 +1,4 @@
-function f = eqn_dyn(t,x)
+function [f, gamma_ref] = eqn_dyn(t,x)
 vfin = 250;
 ctl = 1; % 1 = asservissement, 0 = pas d'asservissement
 
@@ -24,7 +24,6 @@ gr = MUmars/r^2;
 alpha = teta - gamma;
 B = CD0*S/m;
 
-
 if ctl == 0;
     delta = 0;
 else
@@ -33,10 +32,15 @@ else
     dv_aero = vfin - sqrt(v^2 + 2 * MUmars*(1/rfin - 1/r));
     gamma_ref = asin(0.5 * B * hs * (rho_fin-rho)/(log(1+dv_aero/v)));
 
+%     fid2 = fopen('test.txt','a');
+%     fprintf(fid2,'%s\n',num2str(gamma_ref));
+%     fclose(fid2);
+
+
     teta_eq = -((-Pdyn * S * CLalpha * gamma)/(v*m) + (v/r - (MUmars)/(v*r^2))*cos(gamma)) / ((Pdyn * S * CLalpha)/(v*m));
     teta_cmd = (Kp_trans * (gamma_ref - gamma))/((Pdyn * S * CLalpha)/(v*m));
     teta_des = teta_cmd + teta_eq;
-%     teta_des = min(60, max(-60, teta_des));
+
     if teta_des > deg2rad(60)
         teta_des = deg2rad(60);
     else 
