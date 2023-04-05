@@ -31,7 +31,7 @@ xline(tfin, '--')
 legend('Angle de tangage teta', 'Angle d''attaque alpha')
 
 figure()
-plot(tv, z(:,3), "LineWidth",2)
+plot(tv, rad2deg(z(:,6)), "LineWidth",2)
 grid minor
 title('vitesse angulaire de tangage q sans asservissment', "FontSize",20)
 xlabel("temps(s)", "FontSize",15)

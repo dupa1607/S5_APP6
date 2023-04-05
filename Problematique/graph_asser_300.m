@@ -53,7 +53,7 @@ xline(tfin, '--')
 figure()
 plot(tv, rad2deg(z(:,5)))
 hold on
-plot(tv, rad2deg(z(:,5)) - rad2deg(z(:,2)))
+plot(tv, rad2deg(z(:,6)) - rad2deg(z(:,2)))
 grid minor
 title('angle de vol et d''attaque avec asservissement (300)', "FontSize",20)
 xlabel("temps(s)", "FontSize",15)
@@ -62,12 +62,13 @@ xline(tfin, '--')
 legend('Angle de tangage teta', 'Angle d''attaque alpha')
 
 figure()
-plot(tv, z(:,3), "LineWidth",2)
+plot(tv, rad2deg(z(:,5)), "LineWidth",2)
 grid minor
 title('vitesse angulaire de tangage q avec asservissment (300)', "FontSize",20)
 xlabel("temps(s)", "FontSize",15)
 ylabel("vitesse angulaire de tangage (rad/s)", "FontSize",15)
 xline(tfin, '--')
+ylim([-5 5])
 
 
 figure()

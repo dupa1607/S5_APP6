@@ -289,7 +289,7 @@ gamma_ref_250_rt = rad2deg(cell2mat(gamma_ref_250_rt));
 % [~,gamma_ref_300_rt] = cellfun(@(t,x)  eqn_dyn(t,x.'), num2cell(tv), num2cell(z,2),'uni',0);
 % gamma_ref_300_rt = rad2deg(cell2mat(gamma_ref_300_rt));
 %   graph_sans_asser
-  graph_asser_250
+%   graph_asser_250
 %   graph_asser_300
 
 %   disp(['Temps > 2650 = ', num2str(z(end,7)), ' s']);
@@ -305,7 +305,6 @@ gamma_ref_250_rt = rad2deg(cell2mat(gamma_ref_250_rt));
 
 
 %% figures
-% ts = ts + 1; % Il semble y avoir une erreur de shift de 1 dans les données
 figure()
 plot(t, acc_mes, 'o')
 hold on
